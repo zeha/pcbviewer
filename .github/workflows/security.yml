@@ -72,6 +72,9 @@ jobs:
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        language: ['javascript', 'php']
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -79,13 +82,16 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: javascript
+          languages: ${{ matrix.language }}
+          queries: security-extended
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
 
   secret-scan:
     name: Secret Scanning
