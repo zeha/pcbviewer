@@ -22,7 +22,7 @@ jobs:
 
       - name: Test PHP syntax
         run: |
-          find htdocs -name "*.php" -exec php -l {} \; | grep -v "No syntax errors"
+          find htdocs -name "*.php" -exec php -l {} \;
           echo "✓ PHP syntax check passed"
 
       - name: Test shell scripts syntax

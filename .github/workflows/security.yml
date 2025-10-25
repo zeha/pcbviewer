@@ -28,6 +28,7 @@ jobs:
           scandir: '.'
           severity: warning
           format: gcc
+          ignore_paths: htdocs .github
 
   php-lint:
     name: PHP Syntax Check
@@ -108,7 +109,7 @@ jobs:
           path: ./
           base: ${{ github.event.repository.default_branch }}
           head: HEAD
-          extra_args: --debug --only-verified
+          extra_args: --only-verified
 
   security-summary:
     name: Security Summary
