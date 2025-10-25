@@ -51,6 +51,7 @@ kicanvas-embed {
     background: rgba(183, 148, 246, 0.1);
 }
 
+#file-selector,
 #theme-selector {
     background: #111;
     color: #b794f6;
@@ -59,21 +60,34 @@ kicanvas-embed {
     font-size: 14px;
     font-family: inherit;
     cursor: pointer;
-    border-radius: 3px;
+    border-radius: 0;
     outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23b794f6" d="M6 9L1 4h10z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 28px;
+}
+
+#theme-selector {
     display: none; /* Hidden until kicanvas upstream is ready */
 }
 
+#file-selector:hover,
 #theme-selector:hover {
     border-color: #b794f6;
-    background: #1a1a1a;
+    background-color: #1a1a1a;
 }
 
+#file-selector:focus,
 #theme-selector:focus {
     border-color: #b794f6;
     box-shadow: 0 0 0 2px rgba(183, 148, 246, 0.1);
 }
 
+#file-selector option,
 #theme-selector option {
     background: #111;
     color: #fff;
@@ -234,7 +248,7 @@ if ($currentTopLevel !== null) echo "</ul></li>";
 <?php
 } else {
     // If a project is selected, find all related files
-    $filesToLoad = [];
+    $allFiles = [];
     $projectDir = 'projects/' . dirname($selectedProject);
     $projectName = pathinfo($selectedProject, PATHINFO_FILENAME);
 
@@ -244,13 +258,13 @@ if ($currentTopLevel !== null) echo "</ul></li>";
         foreach ($files as $file) {
             $ext = pathinfo($file, PATHINFO_EXTENSION);
             if (in_array($ext, ['kicad_pro', 'kicad_pcb', 'kicad_sch'])) {
-                $filesToLoad[] = $projectDir . '/' . $file;
+                $allFiles[] = $projectDir . '/' . $file;
             }
         }
     }
 
     // Sort files: kicad_pro first, then kicad_sch (alphabetically), then kicad_pcb
-    usort($filesToLoad, function($a, $b) {
+    usort($allFiles, function($a, $b) {
         $extA = pathinfo($a, PATHINFO_EXTENSION);
         $extB = pathinfo($b, PATHINFO_EXTENSION);
 
@@ -267,10 +281,54 @@ if ($currentTopLevel !== null) echo "</ul></li>";
         // Same type, sort alphabetically
         return strcmp($a, $b);
     });
+
+    // Validate and handle file selection parameter (allowlist only)
+    $selectedFile = null;
+    if (isset($_GET['file']) && $_GET['file'] !== 'all') {
+        // Check if the requested file is in our list
+        $requestedFile = $_GET['file'];
+        foreach ($allFiles as $file) {
+            if (basename($file) === $requestedFile) {
+                $selectedFile = $requestedFile;
+                break;
+            }
+        }
+    }
+
+    // Filter files based on selection
+    $filesToLoad = [];
+    if ($selectedFile === null) {
+        // Show all files
+        $filesToLoad = $allFiles;
+    } else {
+        // Show only .kicad_pro and the selected file
+        foreach ($allFiles as $file) {
+            $ext = pathinfo($file, PATHINFO_EXTENSION);
+            $basename = basename($file);
+            if ($ext === 'kicad_pro' || $basename === $selectedFile) {
+                $filesToLoad[] = $file;
+            }
+        }
+    }
+
+    // Build list of selectable files (non-pro files)
+    $selectableFiles = [];
+    foreach ($allFiles as $file) {
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        if ($ext !== 'kicad_pro') {
+            $selectableFiles[] = basename($file);
+        }
+    }
 ?>
     <div id="sources">
         <a href="./">← Back to Project List</a>
         <div class="links-right">
+            <select id="file-selector">
+                <option value="all"<?= $selectedFile === null ? ' selected' : '' ?>>All Files</option>
+<?php foreach ($selectableFiles as $file): ?>
+                <option value="<?= htmlspecialchars($file, ENT_QUOTES, 'UTF-8') ?>"<?= $selectedFile === $file ? ' selected' : '' ?>><?= htmlspecialchars($file) ?></option>
+<?php endforeach; ?>
+            </select>
             <select id="theme-selector">
                 <option value="kicad"<?= $selectedTheme === 'kicad' ? ' selected' : '' ?>>KiCad Theme</option>
                 <option value="witchhazel"<?= $selectedTheme === 'witchhazel' ? ' selected' : '' ?>>Witch Hazel Theme</option>
@@ -294,6 +352,25 @@ if ($currentTopLevel !== null) echo "</ul></li>";
 (function() {
     'use strict';
 
+    // File selector handling
+    const fileSelector = document.getElementById('file-selector');
+    if (fileSelector) {
+        fileSelector.addEventListener('change', function(e) {
+            const file = e.target.value;
+            const url = new URL(window.location);
+
+            if (file === 'all') {
+                url.searchParams.delete('file');
+            } else {
+                url.searchParams.set('file', file);
+            }
+
+            // Reload page with new file selection
+            window.location.href = url.toString();
+        });
+    }
+
+    // Theme selector handling
     const themeSelector = document.getElementById('theme-selector');
     const viewer = document.getElementById('viewer');
 
