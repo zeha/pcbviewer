@@ -30,6 +30,7 @@ kicanvas-embed {
     display: block;
 }
 
+#sources .links-left,
 #sources .links-right {
     display: flex;
     gap: 15px;
@@ -321,14 +322,16 @@ if ($currentTopLevel !== null) echo "</ul></li>";
     }
 ?>
     <div id="sources">
-        <a href="./">← Back to Project List</a>
-        <div class="links-right">
+        <div class="links-left">
+            <a href="./">← Back to Project List</a>
             <select id="file-selector">
                 <option value="all"<?= $selectedFile === null ? ' selected' : '' ?>>All Files</option>
 <?php foreach ($selectableFiles as $file): ?>
                 <option value="<?= htmlspecialchars($file, ENT_QUOTES, 'UTF-8') ?>"<?= $selectedFile === $file ? ' selected' : '' ?>><?= htmlspecialchars($file) ?></option>
 <?php endforeach; ?>
             </select>
+        </div>
+        <div class="links-right">
             <select id="theme-selector">
                 <option value="kicad"<?= $selectedTheme === 'kicad' ? ' selected' : '' ?>>KiCad Theme</option>
                 <option value="witchhazel"<?= $selectedTheme === 'witchhazel' ? ' selected' : '' ?>>Witch Hazel Theme</option>
