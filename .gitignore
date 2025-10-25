@@ -1,0 +1,27 @@
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+.*.tmp
+
+# Backup files
+*.backup
+*~
+
+# macOS
+.DS_Store
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# PHP
+composer.phar
+vendor/
+
+# Cron test output
+test-*.txt
