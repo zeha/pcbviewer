@@ -91,7 +91,7 @@ for repo in "$PROJECTS_DIR"/*; do
         fi
 
         # Return to base directory
-        cd "$SCRIPT_DIR"
+        cd "$SCRIPT_DIR" || exit 1
     else
         log_error "✗ Could not access $repo_name"
         failed_repos=$((failed_repos + 1))
