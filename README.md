@@ -1,5 +1,8 @@
 # PCB Viewer
 
+[![CI](https://github.com/YOUR_USERNAME/pcbviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/pcbviewer/actions/workflows/ci.yml)
+[![Security Scan](https://github.com/YOUR_USERNAME/pcbviewer/actions/workflows/security.yml/badge.svg)](https://github.com/YOUR_USERNAME/pcbviewer/actions/workflows/security.yml)
+
 A web-based viewer for KiCad PCB and schematic files using KiCanvas.
 
 ## Directory Structure
@@ -19,7 +22,20 @@ pcbviewer/
 └── README.md              # This file
 ```
 
+## Security
+
+This project includes:
+- Automated security scanning (ShellCheck, Trivy, CodeQL, secret detection)
+- Input validation and allowlist-based access control
+- Path traversal prevention
+- HTML output escaping
+- Weekly security scans via GitHub Actions
+
+See [SECURITY.md](SECURITY.md) for security policy and reporting vulnerabilities.
+
 ## Setup
+
+**Note:** Replace `YOUR_USERNAME` in the badge URLs above with your GitHub username.
 
 ### Web Server Configuration
 
