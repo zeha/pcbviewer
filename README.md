@@ -40,12 +40,12 @@ Point your web server's document root to the `htdocs/` directory.
 
 Example for Apache:
 ```apache
-DocumentRoot "/Users/ch/Source/pcbviewer/htdocs"
+DocumentRoot "/path/to/pcbviewer/htdocs"
 ```
 
 Example for nginx:
 ```nginx
-root /Users/ch/Source/pcbviewer/htdocs;
+root /path/to/pcbviewer/htdocs;
 index index.php;
 ```
 

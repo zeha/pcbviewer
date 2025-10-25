@@ -10,9 +10,9 @@ To update repositories every day at 3 AM:
 crontab -e
 ```
 
-Add this line:
+Add this line (replace `/path/to/pcbviewer` with your actual path):
 ```
-0 3 * * * /Users/ch/Source/pcbviewer/update-repos.sh
+0 3 * * * /path/to/pcbviewer/update-repos.sh
 ```
 
 ## KiCanvas.js Updates
@@ -23,9 +23,9 @@ To update kicanvas.js weekly on Sundays at 4 AM:
 crontab -e
 ```
 
-Add this line:
+Add this line (replace `/path/to/pcbviewer` with your actual path):
 ```
-0 4 * * 0 /Users/ch/Source/pcbviewer/update-kicanvas.sh
+0 4 * * 0 /path/to/pcbviewer/update-kicanvas.sh
 ```
 
 **Note:** Both scripts are silent on success, so you'll only get emails if updates fail!
@@ -34,17 +34,17 @@ Add this line:
 
 Every 6 hours:
 ```
-0 */6 * * * /Users/ch/Source/pcbviewer/update-repos.sh
+0 */6 * * * /path/to/pcbviewer/update-repos.sh
 ```
 
 Every day at midnight:
 ```
-0 0 * * * /Users/ch/Source/pcbviewer/update-repos.sh
+0 0 * * * /path/to/pcbviewer/update-repos.sh
 ```
 
 Every Monday at 9 AM:
 ```
-0 9 * * 1 /Users/ch/Source/pcbviewer/update-repos.sh
+0 9 * * 1 /path/to/pcbviewer/update-repos.sh
 ```
 
 ## Features
@@ -98,7 +98,7 @@ KICANVAS_URL=https://cdn.example.com/kicanvas.js ./update-kicanvas.sh
 
 Verbose mode (shows all output):
 ```bash
-cd /Users/ch/Source/pcbviewer
+cd /path/to/pcbviewer
 ./update-repos.sh -v
 ```
 
@@ -111,7 +111,7 @@ Silent mode (like cron):
 
 Verbose mode:
 ```bash
-cd /Users/ch/Source/pcbviewer
+cd /path/to/pcbviewer
 ./update-kicanvas.sh -v
 ```
 
@@ -122,6 +122,6 @@ Silent mode (like cron):
 
 Check the logs:
 ```bash
-tail -f /Users/ch/Source/pcbviewer/update-repos.log
-tail -f /Users/ch/Source/pcbviewer/update-kicanvas.log
+tail -f /path/to/pcbviewer/update-repos.log
+tail -f /path/to/pcbviewer/update-kicanvas.log
 ```
