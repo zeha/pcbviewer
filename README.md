@@ -1,8 +1,5 @@
 # PCB Viewer
 
-[![CI](https://github.com/YOUR_USERNAME/pcbviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/pcbviewer/actions/workflows/ci.yml)
-[![Security Scan](https://github.com/YOUR_USERNAME/pcbviewer/actions/workflows/security.yml/badge.svg)](https://github.com/YOUR_USERNAME/pcbviewer/actions/workflows/security.yml)
-
 A web-based viewer for KiCad PCB and schematic files using KiCanvas.
 
 ## Directory Structure
