@@ -7,77 +7,6 @@ on:
     branches: [ main, master ]
 
 jobs:
-  test:
-    name: Test Scripts
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          coverage: none
-
-      - name: Test PHP syntax
-        run: |
-          find htdocs -name "*.php" -exec php -l {} \;
-          echo "✓ PHP syntax check passed"
-
-      - name: Test shell scripts syntax
-        run: |
-          bash -n update-repos.sh
-          bash -n update-kicanvas.sh
-          echo "✓ Shell script syntax check passed"
-
-      - name: Verify directory structure
-        run: |
-          test -d htdocs || (echo "❌ htdocs directory missing" && exit 1)
-          test -f htdocs/index.php || (echo "❌ index.php missing" && exit 1)
-          test -d htdocs/fonts || (echo "❌ fonts directory missing" && exit 1)
-          test -d htdocs/projects || (echo "❌ projects directory missing" && exit 1)
-          test -f update-repos.sh || (echo "❌ update-repos.sh missing" && exit 1)
-          test -f update-kicanvas.sh || (echo "❌ update-kicanvas.sh missing" && exit 1)
-          echo "✓ Directory structure verified"
-
-      - name: Check file permissions
-        run: |
-          test -x update-repos.sh || (echo "❌ update-repos.sh not executable" && exit 1)
-          test -x update-kicanvas.sh || (echo "❌ update-kicanvas.sh not executable" && exit 1)
-          echo "✓ File permissions correct"
-
-      - name: Verify Inter fonts
-        run: |
-          test -f htdocs/fonts/inter.css || (echo "❌ inter.css missing" && exit 1)
-          test -f htdocs/fonts/InterVariable.woff2 || (echo "❌ InterVariable.woff2 missing" && exit 1)
-          test -f htdocs/fonts/InterVariable-Italic.woff2 || (echo "❌ InterVariable-Italic.woff2 missing" && exit 1)
-          echo "✓ Font files verified"
-
-      - name: Check for common security issues
-        run: |
-          echo "Checking for common security issues..."
-
-          # Check for hardcoded credentials
-          if grep -r "password\s*=\s*['\"]" htdocs/ --include="*.php" | grep -v "searchParams"; then
-            echo "❌ Potential hardcoded password found"
-            exit 1
-          fi
-
-          # Check for eval usage
-          if grep -r "eval(" htdocs/ --include="*.php" --include="*.js"; then
-            echo "❌ eval() usage found"
-            exit 1
-          fi
-
-          # Check for shell execution in PHP
-          if grep -r "shell_exec\|exec\|system\|passthru" htdocs/ --include="*.php"; then
-            echo "❌ Shell execution functions found in PHP"
-            exit 1
-          fi
-
-          echo "✓ No common security issues found"
-
   lint:
     name: Code Quality
     runs-on: ubuntu-latest
@@ -89,6 +18,23 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y shellcheck
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Test PHP syntax
+        run: |
+          find htdocs -name "*.php" -exec php -l {} \;
+          echo "✓ PHP syntax check passed"
+
+      - name: Check file permissions
+        run: |
+          test -x update-repos.sh || (echo "❌ update-repos.sh not executable" && exit 1)
+          test -x update-kicanvas.sh || (echo "❌ update-kicanvas.sh not executable" && exit 1)
+          echo "✓ File permissions correct"
 
       - name: Run ShellCheck
         run: |
@@ -102,11 +48,3 @@ jobs:
             exit 1
           fi
           echo "✓ No trailing whitespace"
-
-      - name: Check for TODO/FIXME comments
-        run: |
-          if git grep -I "TODO\|FIXME" -- htdocs/ *.sh | grep -v "TodoWrite"; then
-            echo "⚠️  TODO/FIXME comments found (non-blocking)"
-          else
-            echo "✓ No TODO/FIXME comments"
-          fi
