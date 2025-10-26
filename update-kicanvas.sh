@@ -1,21 +1,11 @@
 #!/bin/bash
-
-# KiCanvas.js update script for cron
-# Safely updates kicanvas.js without destroying existing file if download fails
-# Silent on success (no cron emails), only outputs on errors
-
-# Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_FILE="$SCRIPT_DIR/htdocs/kicanvas.js"
 TEMP_FILE="$SCRIPT_DIR/.kicanvas.js.tmp"
 LOG_FILE="$SCRIPT_DIR/update-kicanvas.log"
 TIMEOUT_SECONDS=60
 
-# KiCanvas download URL - update this to the correct URL
-# Examples:
-#   https://unpkg.com/kicanvas@latest/dist/kicanvas.js
-#   https://cdn.jsdelivr.net/npm/kicanvas@latest/dist/kicanvas.js
-KICANVAS_URL="${KICANVAS_URL:-https://unpkg.com/kicanvas@latest/kicanvas.js}"
+KICANVAS_URL="https://kicanvas.org/kicanvas/kicanvas.js"
 
 # Parse arguments
 VERBOSE=0
