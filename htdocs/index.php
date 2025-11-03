@@ -177,34 +177,45 @@ $topLevelProjects = [
     'reform-qcs6490' => 'Quisar QCS6490 System-on-Module',
 ];
 
-// Discover all kicad_pro files for each toplevel project
+function findKicadProFiles($dir, $baseDir = '') {
+    $results = [];
+    if (!is_dir($dir)) {
+        return $results;
+    }
+
+    $items = scandir($dir);
+    foreach ($items as $item) {
+        if ($item === '.' || $item === '..') continue;
+
+        $fullPath = $dir . '/' . $item;
+        $relativePath = $baseDir ? $baseDir . '/' . $item : $item;
+
+        if (is_dir($fullPath)) {
+            $results = array_merge($results, findKicadProFiles($fullPath, $relativePath));
+        } elseif (pathinfo($item, PATHINFO_EXTENSION) === 'kicad_pro') {
+            $results[] = $relativePath;
+        }
+    }
+
+    return $results;
+}
+
 $projects = [];
 $projectDescriptions = [];
 
 foreach ($topLevelProjects as $topLevel => $description) {
     $topLevelPath = 'projects/' . $topLevel;
     if (is_dir($topLevelPath)) {
-        // Scan for subdirectories containing .kicad_pro files
-        $subdirs = scandir($topLevelPath);
-        foreach ($subdirs as $subdir) {
-            if ($subdir === '.' || $subdir === '..') continue;
-            $subdirPath = $topLevelPath . '/' . $subdir;
-            if (is_dir($subdirPath)) {
-                $files = scandir($subdirPath);
-                foreach ($files as $file) {
-                    if (pathinfo($file, PATHINFO_EXTENSION) === 'kicad_pro') {
-                        $projectPath = $topLevel . '/' . $subdir . '/' . $file;
-                        $projects[] = $projectPath;
-                        $projectDescriptions[$projectPath] = $description;
-                    }
-                }
-            }
+        $foundFiles = findKicadProFiles($topLevelPath, $topLevel);
+        foreach ($foundFiles as $projectPath) {
+            $projects[] = $projectPath;
+            $projectDescriptions[$projectPath] = $description;
         }
     }
 }
 
 // Get selected project from URL parameter
-$selectedProject = isset($_GET['project']) ? $_GET['project'] : null;
+$selectedProject = $_GET['project'] ?? null;
 $isViewerMode = $selectedProject !== null && in_array($selectedProject, $projects);
 
 // Validate theme parameter (allowlist only)
